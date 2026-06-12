@@ -44,6 +44,7 @@ import {
   ResourceSummary,
   SectionHeading,
 } from '@console/internal/components/utils';
+import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { removeQueryArgument } from '@console/internal/components/utils/router';
 import {
   k8sGet,
@@ -566,6 +567,13 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
   subscriptions,
 }) => {
   const { t } = useTranslation();
+  const canUpdateSubscription = useAccessReview({
+    group: SubscriptionModel.apiGroup,
+    resource: SubscriptionModel.plural,
+    verb: 'update',
+    name: obj?.metadata?.name,
+    namespace: obj?.metadata?.namespace,
+  });
   const prevInstallPlanApproval = React.useRef(obj?.spec?.installPlanApproval);
   const prevChannel = React.useRef(obj?.spec?.channel);
   const [waitingForUpdate, setWaitingForUpdate] = React.useState(false);
@@ -628,7 +636,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                 isInline
                 onClick={channelModal}
                 variant="link"
-                isDisabled={!pkg}
+                isDisabled={!pkg || !canUpdateSubscription}
                 data-test="subscription-channel-update-button"
                 icon={<PencilAltIcon />}
                 iconPosition="end"
@@ -663,6 +671,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                   isInline
                   onClick={approvalModal}
                   variant="link"
+                  isDisabled={!canUpdateSubscription}
                 >
                   {obj.spec.installPlanApproval || 'Automatic'}
                 </Button>

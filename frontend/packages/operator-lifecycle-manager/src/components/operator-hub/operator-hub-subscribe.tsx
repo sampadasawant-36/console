@@ -237,6 +237,11 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     verb: 'patch',
     name: CONSOLE_OPERATOR_CONFIG_NAME,
   });
+  const canCreateSubscription = useAccessReview({
+    group: SubscriptionModel.apiGroup,
+    resource: SubscriptionModel.plural,
+    verb: 'create',
+  });
   const csvPlugins = getClusterServiceVersionPlugins(currentCSVDesc?.annotations);
 
   const initializationResourceReference = React.useMemo(
@@ -1175,7 +1180,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               <Button
                 data-test="install-operator"
                 onClick={() => submit()}
-                isDisabled={formValid()}
+                isDisabled={formValid() || !canCreateSubscription}
                 variant="primary"
               >
                 {t('olm~Install')}

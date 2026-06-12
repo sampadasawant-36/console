@@ -519,7 +519,10 @@ const DefaultProvidedAPIPage: React.FC<DefaultProvidedAPIPageProps> = (props) =>
         hideFavoriteButton
         helpText={managesAllNamespaces && <ShowOperandsInAllNamespacesRadioGroup />}
       >
-        <ListPageCreateLink to={createPath}>
+        <ListPageCreateLink
+          to={createPath}
+          createAccessReview={{ groupVersionKind: { group, version, kind }, namespace }}
+        >
           {t('public~Create {{label}}', { label })}
         </ListPageCreateLink>
       </ListPageHeader>
